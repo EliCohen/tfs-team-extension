@@ -1,0 +1,12 @@
+.backlogs-tool-panel-header .capacity-pane-title {
+  position: relative !important;
+  font-weight: bold !important;
+}
+
+.tfsTeamHeader {
+  margin-left: 10px;
+}
+
+.tfsCheckboxLabel {
+  cursor: pointer;
+}
