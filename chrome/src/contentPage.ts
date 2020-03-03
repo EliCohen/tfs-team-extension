@@ -1,12 +1,8 @@
 chrome.runtime.sendMessage({ type: 'showPageAction' });
-chrome.runtime.onMessage.addListener(async function(
-  message,
-  sender,
-  sendResponse
-) {
-  if (message.type == 'calculate') {
+chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+  if (message.type === 'calculate') {
     try {
-      let result = await calculateData();
+      const result = await calculateData();
 
       chrome.runtime.sendMessage({
         type: 'calculateFinish',
@@ -29,26 +25,27 @@ async function calculateData() {
     capacityPaneElement
   );
   const teamProgressText = teamProgressElement.text();
-  let sprintDays = Math.floor(
+  const sprintDays = Math.floor(
     parseInt(
       teamProgressText.slice(
         teamProgressText.indexOf(' of ') + 4,
         teamProgressText.indexOf(' h')
-      )
+      ),
+      0
     ) / 6
   );
 
   const rowsData = await calculateTeamCommitment();
 
   return {
-    data: Array.from(rowsData.values()),
+    data: rowsData,
     leftDays: sprintDays
   };
 }
 
 async function calculateTeamCommitment() {
-  let rowsData = new Map();
-  let currentScroll = $('.productbacklog-grid-results .grid-canvas')[0]
+  const rowsData = new Map();
+  const currentScroll = $('.productbacklog-grid-results .grid-canvas')[0]
     .scrollTop;
   scrollTo(0);
   await sleep(50);
@@ -58,7 +55,7 @@ async function calculateTeamCommitment() {
   getRowsData(rowsData);
   scrollTo(currentScroll);
 
-  return rowsData;
+  return Array.from(rowsData.values());
 }
 
 function getRowsData(rowsData) {
@@ -104,21 +101,22 @@ function getRowsData(rowsData) {
         : undefined;
 
     const orderValue = orderElement ? orderElement.innerText : '0';
-    if (!rowsData.has(orderValue))
+    if (!rowsData.has(orderValue)) {
       rowsData.set(orderValue, {
         type: titleElement ? titleElement.attr('aria-label') : '',
         state: stateElement ? stateElement.text() : '',
         effort:
           effortElement && isInt(effortElement.innerText)
-            ? parseInt(effortElement.innerText)
+            ? parseInt(effortElement.innerText, 0)
             : 0,
         assignedTo: assignedToElement ? assignedToElement.text() : ''
       });
+    }
   });
 }
 
 function validateMandatoryColumns(titleIndex, stateIndex, effortIndex) {
-  let missingColumns = [];
+  const missingColumns = [];
 
   if (titleIndex === -1) {
     missingColumns.push('Title');
@@ -131,7 +129,7 @@ function validateMandatoryColumns(titleIndex, stateIndex, effortIndex) {
   }
 
   if (missingColumns.length > 0) {
-    let missingMessage =
+    const missingMessage =
       missingColumns.length === 1
         ? ' column is missing! Please add it and try again.'
         : ' columns are missing! Please add them and try again.';
@@ -141,19 +139,18 @@ function validateMandatoryColumns(titleIndex, stateIndex, effortIndex) {
 
 function isInt(value) {
   return (
-    !isNaN(value) &&
-    parseInt(Number(value)) == value &&
-    !isNaN(parseInt(value, 10))
+    // tslint:disable-next-line: triple-equals
+    !isNaN(value) && parseInt(value, 0) == value && !isNaN(parseInt(value, 10))
   );
 }
 
 function scrollTo(value) {
-  let gridElement = $('.productbacklog-grid-results .grid-canvas')[0];
+  const gridElement = $('.productbacklog-grid-results .grid-canvas')[0];
   gridElement.scrollTo(0, value);
 }
 
 function scrollToBottom() {
-  let gridElement = $('.productbacklog-grid-results .grid-canvas')[0];
+  const gridElement = $('.productbacklog-grid-results .grid-canvas')[0];
   scrollTo(gridElement.scrollHeight);
 }
 

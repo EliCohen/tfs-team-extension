@@ -10,18 +10,17 @@
   },
   "page_action": {
     "default_icon": "icon16.png",
-    "default_popup": "popup.html",
+    "default_popup": "index.html",
     "default_title": "TFS Team"
   },
   "content_scripts": [
     {
-      "css": ["tfsTeamExtension.css"],
-      "js": ["tfsTeamExtension.js", "jquery-3.4.1.min.js"],
+      "js": ["contentPage.js", "jquery.min.js"],
       "matches": ["https://tfs.varonis.com/*"]
     }
   ],
   "background": {
-    "scripts": ["eventPage.js"],
+    "scripts": ["background.js"],
     "persistent": false
   },
 
