@@ -1,0 +1,13 @@
+<div class="summary-container">
+    <label id="totalCommitmentsDays">Total commitments days: <span
+            class="totalValue">{{data.totalCommitmentsDays}}</span></label>
+    <label id="donePbi">Done PBIs: <span class="totalValue">{{data.donePbi}}</span></label>
+    <label id="notDonePbi">Not done PBIs: <span class="totalValue">{{data.notDonePbi}}</span></label>
+    <label id="teamDaysLeft">Team days left: <span class="totalValue">{{data.teamDaysLeft}}</span></label>
+    <label id="commitmentsDaysLeft">Commitments days left: <span class="totalValue"
+            [ngClass]="{'greenValue':data.commitmentsDaysLeft <= data.teamDaysLeft, 'redValue': data.commitmentsDaysLeft > data.teamDaysLeft}">{{data.commitmentsDaysLeft}}</span></label>
+    <div class="progress-bar-container">Team Progress:
+        <label class="progress-value">{{progressBarValue}}%</label>
+        <mat-progress-bar class="progress-bar" mode="determinate" [value]="progressBarValue"></mat-progress-bar>
+    </div>
+</div>

@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { ISummaryData } from './summary/summary-data.interface';
 
 @Component({
   selector: 'app-root',
@@ -6,12 +8,24 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  title = 'tfs-team-extension';
+  showError = false;
+  showSummary = false;
+  summaryData: ISummaryData;
+  errorMessage: string;
 
-  ngOnInit(): void {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private spinner: NgxSpinnerService
+  ) {}
+
+  async ngOnInit() {
+    await this.spinner.show();
+    chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
       if (!tabs[0].url.includes('/_backlogs/')) {
-        this.setError('You need to be in the backlog page!');
+        this.errorMessage = 'You need to be in the backlog page!';
+        await this.spinner.hide();
+        this.showError = true;
+        this.cdr.detectChanges();
       } else {
         chrome.tabs.sendMessage(tabs[0].id, {
           type: 'calculate'
@@ -19,19 +33,32 @@ export class AppComponent implements OnInit {
       }
     });
 
-    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-      switch (message.type) {
-        case 'calculateFinish':
-          setTimeout(() => this.setData(message.data, message.leftDays), 300);
-          break;
-        case 'calculateError':
-          this.setError(message.error);
-          break;
+    chrome.runtime.onMessage.addListener(
+      async (message, sender, sendResponse) => {
+        await setTimeout(async () => {
+          switch (message.type) {
+            case 'calculateFinish':
+              this.summaryData = await this.getData(
+                message.data,
+                message.leftDays
+              );
+              await this.spinner.hide();
+              this.showSummary = true;
+              break;
+            case 'calculateError':
+              this.errorMessage = message.error;
+              await this.spinner.hide();
+              this.showError = true;
+              break;
+          }
+
+          this.cdr.detectChanges();
+        }, 250);
       }
-    });
+    );
   }
 
-  setData(data, leftDays) {
+  getData(data, leftDays): ISummaryData {
     let totalCommitmentsDays = 0;
     let donePbi = 0;
     let notDonePbi = 0;
@@ -42,10 +69,9 @@ export class AppComponent implements OnInit {
         totalCommitmentsDays += !['New', 'Approved'].includes(value.state)
           ? value.effort
           : 0;
-
         donePbi += value.state === 'Done' ? 1 : 0;
         notDonePbi += !['New', 'Approved', 'Done'].includes(value.state)
-          ? 1
+          ? value.effort
           : 0;
         commitmentsDaysLeft += !['New', 'Approved', 'Done'].includes(
           value.state
@@ -54,42 +80,16 @@ export class AppComponent implements OnInit {
           : 0;
       }
     });
-
-    $('#totalCommitmentsDays .totalValue').text(
-      totalCommitmentsDays > 0 ? totalCommitmentsDays : 'None'
-    );
-    $('#donePbi .totalValue').text(donePbi > 0 ? donePbi : 'None');
-    $('#notDonePbi .totalValue').text(notDonePbi > 0 ? notDonePbi : 'None');
-    $('#commitmentsDaysLeft .totalValue').text(
-      commitmentsDaysLeft > 0 ? commitmentsDaysLeft : 'None'
-    );
-    $('#teamDaysLeft .totalValue').text(leftDays > 0 ? leftDays : 'None');
-
-    if (commitmentsDaysLeft > leftDays) {
-      $('#commitmentsDaysLeft .totalValue').addClass('redValue');
-    } else {
-      $('#commitmentsDaysLeft .totalValue').addClass('greenValue');
-    }
-
-    this.removeLoading();
-    $('.summary-container').removeClass('hidden');
-  }
-
-  setError(error) {
-    $('.error-container #error').text(error);
-    this.removeLoading();
-    $('.error-container').removeClass('hidden');
+    return {
+      totalCommitmentsDays,
+      donePbi,
+      notDonePbi,
+      commitmentsDaysLeft,
+      teamDaysLeft: leftDays
+    } as ISummaryData;
   }
 
   isPbi(rowData) {
     return rowData.type === 'Product Backlog Item';
-  }
-
-  removeLoading() {
-    $('.loading-container').addClass('hidden');
-  }
-
-  showLoading() {
-    $('.loading-container').removeClass('hidden');
   }
 }

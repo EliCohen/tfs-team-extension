@@ -10,7 +10,7 @@
   },
   "page_action": {
     "default_icon": "icon16.png",
-    "default_popup": "index.html",
+    "default_popup": "popup/index.html",
     "default_title": "TFS Team"
   },
   "content_scripts": [
@@ -23,6 +23,7 @@
     "scripts": ["background.js"],
     "persistent": false
   },
+  "options_page": "options/index.html",
 
   "commands": {
     "_execute_page_action": {
@@ -33,5 +34,10 @@
     }
   },
 
-  "permissions": ["notifications", "tabs", "https://tfs.varonis.com/*"]
+  "permissions": [
+    "storage",
+    "notifications",
+    "tabs",
+    "https://tfs.varonis.com/*"
+  ]
 }

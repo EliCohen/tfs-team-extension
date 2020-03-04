@@ -7,7 +7,7 @@ module.exports = {
   mode: 'production',
   entry: {
     contentPage: join(__dirname, 'src/contentPage.ts'),
-    backgroundPage: join(__dirname, 'src/backgroundPage.ts')
+    background: join(__dirname, 'src/background.ts')
   },
   output: {
     path: join(__dirname, '../dist'),

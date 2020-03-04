@@ -1,0 +1,41 @@
+app-summary {
+  .summary-container {
+    font-size: 20px;
+    label {
+      display: block;
+    }
+    .totalValue {
+      font-weight: bold;
+    }
+    .greenValue {
+      color: green;
+    }
+    .redValue {
+      color: red;
+    }
+
+    .progress-bar-container {
+      font-size: 14px;
+      margin-top: 20px;
+
+      .progress-value {
+        position: absolute;
+        z-index: 999;
+        margin-top: 6px;
+        margin-left: 30;
+        width: 300px;
+        text-align: center;
+      }
+
+      .progress-bar {
+        margin-top: 5px;
+        height: 18px;
+        border-radius: 15px;
+
+        .mat-progress-bar-fill::after {
+          background-color: #0faf00 !important;
+        }
+      }
+    }
+  }
+}
