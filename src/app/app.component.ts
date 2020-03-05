@@ -12,6 +12,7 @@ export class AppComponent implements OnInit {
   showSummary = false;
   summaryData: ISummaryData;
   errorMessage: string;
+  backlogUrl: string;
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -22,13 +23,19 @@ export class AppComponent implements OnInit {
     await this.spinner.show();
     chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
       if (!tabs[0].url.includes('/_backlogs/')) {
-        this.errorMessage = 'You need to be in the backlog page!';
-        await this.spinner.hide();
-        this.showError = true;
-        this.cdr.detectChanges();
+        chrome.storage.sync.get('backlogUrl', async (options) => {
+          this.errorMessage = 'Works in backlog only!';
+          this.backlogUrl = options.backlogUrl;
+          await this.spinner.hide();
+          this.showError = true;
+          this.cdr.detectChanges();
+        });
       } else {
-        chrome.tabs.sendMessage(tabs[0].id, {
-          type: 'calculate'
+        chrome.storage.sync.get('capacityPerDay', (options) => {
+          chrome.tabs.sendMessage(tabs[0].id, {
+            type: 'calculate',
+            capacityPerDay: options.capacityPerDay
+          });
         });
       }
     });
@@ -71,7 +78,7 @@ export class AppComponent implements OnInit {
           : 0;
         donePbi += value.state === 'Done' ? 1 : 0;
         notDonePbi += !['New', 'Approved', 'Done'].includes(value.state)
-          ? value.effort
+          ? 1
           : 0;
         commitmentsDaysLeft += !['New', 'Approved', 'Done'].includes(
           value.state

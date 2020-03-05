@@ -1,0 +1,32 @@
+.form-container {
+  width: 100%;
+  text-align: center;
+
+  h1 {
+      margin-bottom: 30px;
+  }
+
+  .form-field-short {
+    display: inline-block;
+    margin-left: 20px;
+    width: 180px;
+  }
+
+  .form-field {
+    display: inline-block;
+    width: 240px;
+  }
+
+  .form-field-long {
+    display: block;
+    margin: auto;
+    width: 440px;
+  }
+
+  .save-button {
+    font-size: 16px;
+    display: block;
+    margin: 20px auto 0 auto;
+    padding: 4px 18px;
+  }
+}

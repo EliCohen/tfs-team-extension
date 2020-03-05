@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatButtonModule } from '@angular/material/button';
 import { NgxSpinnerModule } from 'ngx-spinner';
 
 import { AppComponent } from './app.component';
@@ -20,6 +21,7 @@ import { SummaryComponent } from './summary/summary.component';
     BrowserModule,
     BrowserAnimationsModule,
     MatProgressBarModule,
+    MatButtonModule,
     NgxSpinnerModule
   ],
   providers: [],

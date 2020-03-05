@@ -2,7 +2,7 @@ chrome.runtime.sendMessage({ type: 'showPageAction' });
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   if (message.type === 'calculate') {
     try {
-      const result = await calculateData();
+      const result = await calculateData(message.capacityPerDay ?? 6);
 
       chrome.runtime.sendMessage({
         type: 'calculateFinish',
@@ -18,7 +18,7 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   }
 });
 
-async function calculateData() {
+async function calculateData(capacityPerDay) {
   const capacityPaneElement = $('.capacity-pane-container');
   const teamProgressElement = $(
     '.team-capacity-control .progress-text',
@@ -32,7 +32,7 @@ async function calculateData() {
         teamProgressText.indexOf(' h')
       ),
       0
-    ) / 6
+    ) / capacityPerDay
   );
 
   const rowsData = await calculateTeamCommitment();

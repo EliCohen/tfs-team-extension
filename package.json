@@ -10,7 +10,7 @@
     "watch:popup": "ng build --watch --delete-output-path false",
     "build:options": "ng build options",
     "build:options-production": "ng build options --prod",
-    "watch:options": "ng build --watch --delete-output-path false",
+    "watch:options": "ng build options --watch --delete-output-path false",
     "build:chrome": "webpack --config chrome/webpack.config.js",
     "build:chrome-production": "webpack -p --config chrome/webpack.config.prod.js",
     "watch:chrome": "webpack --config chrome/webpack.config.js -w",

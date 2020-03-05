@@ -1,1 +1,26 @@
-<h1>Options</h1>
+<div class="form-container">
+    <h1>Options</h1>
+
+    <mat-form-field appearance="outline" class="form-field-long">
+        <mat-label>Backlog URL</mat-label>
+        <input type="text" matInput placeholder="https://www.tfs.com" [(ngModel)]="options.backlogUrl"
+            [value]="options.backlogUrl">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Export email</mat-label>
+        <input type="email" matInput placeholder="mail@example.com" [(ngModel)]="options.exportEmail"
+            [value]="options.exportEmail">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field-short">
+        <mat-label>Capacity per day</mat-label>
+        <mat-select [(ngModel)]="options.capacityPerDay" [value]="options.capacityPerDay">
+            <mat-option *ngFor="let h of [6,7,8,9,10]" [value]="h">
+                {{h}}h
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <button class="save-button" (click)="saveOptions()" mat-raised-button color="primary">Save</button>
+</div>
